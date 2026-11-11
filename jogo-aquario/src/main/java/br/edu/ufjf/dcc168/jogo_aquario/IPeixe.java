@@ -1,49 +1,19 @@
 package br.edu.ufjf.dcc168.jogo_aquario;
 
 public abstract class IPeixe {
-
-    protected int fome;
-    protected int reproducao;
-    private boolean movimentou = false;
+    private boolean agiuNaIteracao;
 
     public abstract Tipo getTipo();
 
-    public int getFome() {
-        return fome;
+    public boolean agiuNaIteracao() {
+        return agiuNaIteracao;
     }
 
-    public void incrementarFome() {
-        if (fome < 0)
-            fome = 0;
-        fome++;
+    void marcarAcao() {
+        agiuNaIteracao = true;
     }
 
-    public void decrementarFome() {
-        if (fome > 0)
-            fome = 0;
-        fome--;
+    void liberarAcao() {
+        agiuNaIteracao = false;
     }
-
-    public int getReproducao() {
-        return reproducao;
-    }
-
-    public abstract void incrementarReproducao();
-
-    public void resetarReproducao() {
-        reproducao = 0;
-    }
-
-    public boolean realizouMovimentoNoTurno() {
-        return movimentou;
-    }
-
-    public void registrarMovimento() {
-        movimentou = true;
-    }
-
-    public void resetarMovimento() {
-        movimentou = false;
-    }
-
 }

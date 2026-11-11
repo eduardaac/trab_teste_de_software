@@ -1,70 +1,69 @@
 package br.edu.ufjf.dcc168.jogo_aquario;
 
+import java.io.PrintStream;
+import java.util.Scanner;
+
 public class Game {
-    public Game() {
-        aquario = null;
-        turn = 0;
-    }
+    private final Aquario aquario;
+    private final Scanner entrada;
+    private final PrintStream saida;
+    private int pontuacao;
+    private boolean encerradoPeloJogador;
 
-    private Aquario aquario;
-    private int turn;
-
-    public void newAquario(int linhas, int colunas, int peixesA, int peixesB, int reproducaoA, int mortalidadeA,
-            int reproducaoB, int mortalidadeB) {
-        aquario = new Aquario(linhas, colunas, peixesA, peixesB, reproducaoA, mortalidadeA, reproducaoB, mortalidadeB);
-        turn = 0;
-    }
-
-    public void newAquario(Aquario aquario) {
+    public Game(Aquario aquario, Scanner entrada, PrintStream saida) {
         this.aquario = aquario;
-        turn = 0;
+        this.entrada = entrada;
+        this.saida = saida;
     }
 
-    public void nextCycle() {
-        if (aquario == null) {
-            System.out.println("Aquário não inicializado.");
-            return;
+    public int getPontuacao() {
+        return pontuacao;
+    }
+
+    public boolean isFimDeJogo() {
+        return encerradoPeloJogador || aquario.contarPeixes(Tipo.B) == 0;
+    }
+
+    public void encerrar() {
+        encerradoPeloJogador = true;
+    }
+
+    public void executarIteracao() {
+        if (isFimDeJogo())
+            throw new IllegalStateException("O jogo já terminou.");
+        aquario.iterar();
+        pontuacao++;
+        saida.println("Iteração " + pontuacao + ":");
+        saida.print(aquario);
+        saida.println("Peixes A: " + aquario.contarPeixes(Tipo.A) + " | Peixes B: " + aquario.contarPeixes(Tipo.B));
+    }
+
+    public int jogar() {
+        saida.println("Estado inicial:");
+        saida.print(aquario);
+        while (!isFimDeJogo()) {
+            executarIteracao();
+            if (!isFimDeJogo() && !desejaContinuar())
+                encerrar();
         }
-        if (endGame() > 0)
-            return;
-        turn++;
-        aquario.iterarCiclo();
-        System.out.println("Turno: " + turn);
-        exibir();
+        if (encerradoPeloJogador)
+            saida.println("Fim de jogo: encerrado pelo jogador.");
+        else
+            saida.println("Fim de jogo: não há mais peixes do tipo B.");
+        saida.println("Pontuação: " + pontuacao);
+        return pontuacao;
     }
 
-    public void skipCycle() {
-        if (aquario == null) {
-            System.out.println("Aquário não inicializado.");
-            return;
+    private boolean desejaContinuar() {
+        saida.print("Continuar? (s/n): ");
+        while (entrada.hasNextLine()) {
+            String resposta = entrada.nextLine().trim();
+            if (resposta.equalsIgnoreCase("s"))
+                return true;
+            if (resposta.equalsIgnoreCase("n"))
+                return false;
+            saida.print("Opção inválida. Digite s ou n: ");
         }
-        if (endGame() > 0)
-            return;
-        turn++;
-        aquario.forcarProximaIteracao();
-        System.out.println("Turno: " + turn);
-        exibir();
+        return false;
     }
-
-    private void exibir() {
-        for (int i = 0; i < aquario.getLinhas(); i++) {
-            for (int j = 0; j < aquario.getColunas(); j++) {
-                IPeixe peixe = aquario.getPeixe(i, j);
-                System.out.print(peixe == null ? ". " : peixe.getTipo() + " ");
-            }
-            System.out.println();
-        }
-    }
-
-    public int endGame() {
-        if (aquario.contarPeixes(Tipo.B) <= 0) {
-            System.out.println("Todos os peixes do tipo B morreram.");
-            System.out.println("Fim do jogo.");
-            System.out.println("Total de turnos: " + turn);
-            aquario = null;
-            return turn;
-        }
-        return 0;
-    }
-
 }

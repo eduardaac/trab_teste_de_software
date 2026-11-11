@@ -1,6 +1,33 @@
 @startuml AquarioClassDiagram
 
-title Diagrama de Classes do Jogo Aquário
+title Diagrama de Classes do Jogo do Aquário (Parte II)
+
+class Main {
+    + {static} main(String[] args): void
+    ~ {static} executar(String[] args, InputStream in, PrintStream out): int
+}
+
+class Parametros {
+    + {static} NOMES: String[]
+    + {static} converter(String[] valores): int[]
+    + {static} converterInteiro(String nome, String valor): int
+    + {static} ler(Scanner entrada, PrintStream saida): int[]
+}
+
+class Game {
+    - aquario: Aquario
+    - entrada: Scanner
+    - saida: PrintStream
+    - pontuacao: int
+    - encerradoPeloJogador: boolean
+    + Game(Aquario aquario, Scanner entrada, PrintStream saida)
+    + getPontuacao(): int
+    + isFimDeJogo(): boolean
+    + encerrar(): void
+    + executarIteracao(): void
+    + jogar(): int
+    - desejaContinuar(): boolean
+}
 
 class Aquario {
     - linhas: int
@@ -10,74 +37,52 @@ class Aquario {
     - mortalidadeA: int
     - reproducaoB: int
     - mortalidadeB: int
-
-    + Aquario(int m, int n, int x, int y, int rA, int mA, int rB, int mB)
+    - random: Random
+    + Aquario(int m, int n, int ra, int ma, int rb, int mb, Random random)
+    + Aquario(int m, int n, int x, int y, int ra, int ma, int rb, int mb, Random random)
     + getLinhas(): int
     + getColunas(): int
-    + getReproducaoA(): int
-    + getMortalidadeA(): int
-    + getReproducaoB(): int
-    + getMortalidadeB(): int
     + coordenadaValida(int linha, int coluna): boolean
-    + coordenadaOcupada(int linha, int coluna): boolean
     + getPeixe(int linha, int coluna): IPeixe
-    + removerPeixe(int linha, int coluna): IPeixe
     + posicionarPeixe(int linha, int coluna, IPeixe peixe): boolean
-    + moverPeixe(int linhaOrigem, int colunaOrigem, int linhaDestino, int colunaDestino): boolean
-    + iterarCiclo(): void
-    + forcarProximaIteracao(): void
+    + removerPeixe(int linha, int coluna): IPeixe
     + contarPeixes(Tipo tipo): int
-}
-
-class Game {
-    - aquario: Aquario
-    - turn: int
-    + Game()
-    + newAquario(int linhas, int colunas, int peixesA, int peixesB, int reproducaoA, int mortalidadeA, int reproducaoB, int mortalidadeB): void
-    + newAquario(Aquario aquario): void
-    + nextCycle(): void
-    + skipCycle(): void
-    - exibir(): void
-    + endGame(): int
+    + iterar(): void
+    + toString(): String
+    - agirPeixeA(PeixeA peixe, int i, int j): void
+    - agirPeixeB(PeixeB peixe, int i, int j): void
+    - adjacentes(int linha, int coluna, Tipo tipo): List<int[]>
 }
 
 enum Tipo {
     A
     B
-    N
 }
 
 abstract class IPeixe {
-    # fome: int
-    # reproducao: int
-    - movimentou: boolean
-
+    - agiuNaIteracao: boolean
     + {abstract} getTipo(): Tipo
-    + getFome(): int
-    + incrementarFome(): void
-    + decrementarFome(): void
-    + getReproducao(): int
-    + {abstract} incrementarReproducao(): void
-    + resetarReproducao(): void
-    + realizouMovimentoNoTurno(): boolean
-    + registrarMovimento(): void
-    + resetarMovimento(): void
+    + agiuNaIteracao(): boolean
 }
 
 class PeixeA extends IPeixe {
-    + getTipo(): Tipo
-    + incrementarReproducao(): void
+    - movimentosSeguidos: int
+    - iteracoesParado: int
+    + getMovimentosSeguidos(): int
+    + getIteracoesParado(): int
 }
 
-class PeixeB extends IPeixe{
-    + getTipo(): Tipo
-    + incrementarReproducao(): void
+class PeixeB extends IPeixe {
+    - peixesComidos: int
+    - iteracoesSemComer: int
+    + getPeixesComidos(): int
+    + getIteracoesSemComer(): int
 }
 
+Main ..> Parametros : usa
+Main ..> Game : cria
+Game "1" o-- "1" Aquario : controla
 Aquario "1" *-- "0..*" IPeixe : contém
-Game "1" o-- "0..1" Aquario : gerencia
-Aquario ..> Tipo : utiliza
-PeixeA ..> Tipo : utiliza
-PeixeB ..> Tipo : utiliza
+IPeixe ..> Tipo
 
 @enduml
