@@ -58,62 +58,6 @@ jogo-aquario/
         └── Cenario.java       montagem de cenários usada pelos testes
 ```
 
-O diagrama de classes está em [`class.puml`](class.puml) (PlantUML).
-
-## Como executar
-
-### No Eclipse
-
-1. *File → Import → Maven → Existing Maven Projects* e selecione a pasta `jogo-aquario`.
-2. Execute `Main` (*Run As → Java Application*). Os parâmetros podem ser informados em *Run Configurations → Arguments*, na ordem `M N X Y RA MA RB MB`, ou digitados quando o programa pedir.
-
-### Pelo terminal (com Maven instalado)
-
-```bash
-cd jogo-aquario
-mvn compile
-java -cp target/classes br.edu.ufjf.dcc168.jogo_aquario.Main 4 5 6 2 2 3 2 4
-```
-
-Exemplo de saída:
-
-```
-Estado inicial:
-A A . . A
-A A B . .
-. . . B .
-. . . . A
-Iteração 1:
-A . B A .
-. . . . .
-A A . . .
-. . . . B
-Peixes A: 4 | Peixes B: 2
-Continuar? (s/n): n
-Fim de jogo: encerrado pelo jogador.
-Pontuação: 1
-```
-
-## Testes
-
-```bash
-cd jogo-aquario
-mvn test
-```
-
-No Eclipse: botão direito no projeto → *Run As → JUnit Test*.
-
-| Conjunto | Casos | Instruções | Ramos |
-|---|---|---|---|
-| TestSet-Func | 19 | 86,4% | 87,7% |
-| TestSet-Func + TestSet-Estr | 33 | 100% | 100% |
-
-### Cobertura
-
-- **Fluxo de controle (EclEmma):** botão direito no projeto → *Coverage As → JUnit Test*.
-- **Fluxo de dados (Baduíno):** botão direito no projeto → *Baduino → Coverage*.
-
-O projeto é compilado para Java 8 porque o Baduíno não instrumenta bytecode de versões mais novas.
 
 ## Tecnologias
 
