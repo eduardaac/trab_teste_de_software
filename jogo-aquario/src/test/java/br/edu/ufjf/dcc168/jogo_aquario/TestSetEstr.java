@@ -190,4 +190,12 @@ public class TestSetEstr {
         assertTrue(out.texto().contains("Estado inicial:"));
         assertTrue(out.texto().contains("Pontuação: "));
     }
+
+    @Test
+    @DisplayName("CTE15 - Entrada vazia na leitura interativa é rejeitada no primeiro parâmetro")
+    public void cte15LeituraVazia() {
+        String texto = erroDoMain(new String[0], "");
+
+        assertTrue(texto.contains("Erro: Entrada incompleta: faltou o parâmetro M."));
+    }
 }
